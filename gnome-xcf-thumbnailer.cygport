@@ -1,0 +1,27 @@
+inherit gnome2
+
+NAME="gnome-xcf-thumbnailer"
+VERSION=1.0
+RELEASE=1
+CATEGORY="GNOME"
+SUMMARY="Thumbnailer for GIMP XCF files"
+DESCRIPTION=${SUMMARY}
+
+PATCH_URI="
+	http://pkgs.fedoraproject.org/cgit/gnome-xcf-thumbnailer.git/plain/gnome-xcf-thumbnailer-1.0-CVE-2009-2175.patch?h=f20
+	http://pkgs.fedoraproject.org/cgit/gnome-xcf-thumbnailer.git/plain/gnome-xcf-thumbnailer-1.0-libpng15.patch?h=f20
+"
+
+# see http://www.webupd8.org/2013/07/how-to-get-xcf-thumbnails-in-nautilus.html
+src_install() {
+	cd ${B}
+	cyginstall schemasdir= schemas_DATA=
+
+	dodir /usr/share/thumbnailers
+	cat > ${D}/usr/share/thumbnailers/${NAME}.thumbnailer <<_EOF
+[Thumbnailer Entry]
+TryExec=gnome-xcf-thumbnailer
+Exec=gnome-xcf-thumbnailer -s %s %i %o
+MimeType=image/x-xcf;image/x-compressed-xcf;
+_EOF
+}
